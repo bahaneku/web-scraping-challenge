@@ -12,7 +12,7 @@ def scrape():
     news_url = 'https://mars.nasa.gov/news/?page=0&per_page=40&order=publish_date+desc%2Ccreated_at+desc&search=&category=19%2C165%2C184%2C204&blank_scope=Latest'
 
     response=requests.get(news_url)
-    soup = bs(response.text, "lxml")
+    soup = bs(response.text, "html.parser")
 
     headlines = soup.find_all("div", class_="list_text")
 
@@ -164,7 +164,7 @@ def scrape():
     # data.update({"hemis_images": hemis_image_urls})
 
     data = {"latest_news": header, 
-            "Teaser": teaser,
+            "teaser": teaser,
             "featured_image": featured_image_url,
             "mars_fact_table": mars_table_html,
             "hemis_images": hemis_image_urls
