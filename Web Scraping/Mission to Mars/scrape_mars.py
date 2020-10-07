@@ -6,27 +6,31 @@ import pymongo
 import time
 from pymongo import MongoClient
 
-def scrape():
-    # data = {}
-# def headline(): 
+data={}
+def headline():
+    executable_path = {'executable_path': 'chromedriver.exe'}
+    browser = Browser('chrome', **executable_path, headless=False)
+
     news_url = 'https://mars.nasa.gov/news/?page=0&per_page=40&order=publish_date+desc%2Ccreated_at+desc&search=&category=19%2C165%2C184%2C204&blank_scope=Latest'
+    browser.visit(news_url)
 
-    response=requests.get(news_url)
-    soup = bs(response.text, "html.parser")
+    # response=requests.get(news_url)
+    html = browser.html
+    soup = bs(html, "html.parser")
 
-    headlines = soup.find_all("div", class_="list_text")
+    headlines = soup.find("div", class_="list_text")
 
-    header = headlines.find_all("div",class_="content_title")
-    header = headlines[0].text
+    header = headlines.find("div", class_="content_title").text
+    header = headlines.find("a").text
     header = header.strip()
 
-    paragraph=headlines.find("div", class_="article_teaser_body")
+    paragraph = headlines.find("div", class_="article_teaser_body")
     teaser = paragraph[0].text
     teaser = teaser.strip()
 
-    # data.update({"latest_news":header,"Teaser":teaser})
+    data.update({"latest_news":header,"Teaser":teaser})
 
-# def featured_image():   
+def featured_image():   
     executable_path = {'executable_path': 'chromedriver.exe'}
     browser = Browser('chrome', **executable_path, headless=False)
 
@@ -41,12 +45,12 @@ def scrape():
     image=soup.find("figure", class_="lede").a["href"]
     featured_image_url=fullimage_url_string+image
 
-    # data.update({"featured_image":featured_image_url})
+    data.update({"featured_image":featured_image_url})
 
 
     browser.quit()
 
-# def facts():
+def facts():
     marsfacts_url="https://space-facts.com/mars/"
     fact_table=pd.read_html(marsfacts_url)
     mars_table = fact_table[0]
@@ -58,124 +62,63 @@ def scrape():
     html_table_file.write(mars_table_html)
     html_table_file.close()
 
-    # data.update({"mars_fact_table":mars_table_html})
+    data.update({"mars_fact_table":mars_table_html})
 
-
-# # def images():
+# def images():
 #     executable_path = {'executable_path': 'chromedriver.exe'}
 #     browser = Browser('chrome', **executable_path, headless=False)
-
-    #Cerebrus
-
-    cerb_url = 'https://astrogeology.usgs.gov/search/map/Mars/Viking/cerberus_enhanced'
-
-    response = requests.get(cerb_url)
-    soup = bs(response.text, 'lxml')
-
-    cerb_title = soup.find('title').text
-    cerb_title = cerb_title.split('|')
-    cerb_title = cerb_title[0]
-
-    cerb_hemisphere = soup.find_all('div', class_='wide-image-wrapper')
-    cerb_hemisphere = cerb_hemisphere[0]
-    cerb_hemisphere = cerb_hemisphere.find_all('img', class_='wide-image')
-    cerb_hemisphere = cerb_hemisphere[0]
-    cerb_hemisphere = cerb_hemisphere['src']
-
     
-    hemis_base_url = 'https://astrogeology.usgs.gov/'
-    cerb_full_url = hemis_base_url + cerb_hemisphere
+#     hemis_url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
+#     browser.visit(hemis_url)
+#     time.sleep(1)
 
-    #Initialize dictionary to save url image and title
-    hemis_image_urls = [
-        {"title": cerb_title, "img_url": cerb_full_url}
-    ]
+#     hemis_url_string = 'https://astrogeology.usgs.gov/'
 
-    # Valles Marineris
+#     html = browser.html
+#     soup = bs(browser.html)
+#     hemis = soup.find_all('div', class_='item')
+#     for each_hemis in hemis:
+#         links=[each_hemis.find('a').find('div', class_='description')].find('a') = each_hemis.find('a').get('href')
+#     for each_hemis in links:
+#         browser.visit(links[each_hemis])
+#         soup = bs(browser.html)
+#         link = soup.find(class_='downloads').find('ul').find
+#         hemis_image_urls['title'] = each_hemis
 
-    val_url = 'https://astrogeology.usgs.gov/search/map/Mars/Viking/valles_marineris_enhanced'
+#         executable_path = {'executable_path': 'chromedriver.exe'}
+#         browser = Browser('chrome', **executable_path, headless=True)
 
-    response = requests.get(val_url)
-    soup = bs(response.text, 'lxml')
+#         hemis_url = "https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars"
+#         browser.visit(hemis_url)
+#         hemis_url_string = "https://astrogeology.usgs.gov/"
+#         html = browser.html
+        # soup = bs(html, "html.parser")
 
-    val_title = soup.find('title').text
-    val_title = val_title.split('|')
-    val_title = val_title[0]
+    # links = []
 
-    val_hemisphere = soup.find_all('div', class_='wide-image-wrapper')
-    val_hemisphere = val_hemisphere[0]
-    val_hemisphere = val_hemisphere.find_all('img', class_='wide-image')
-    val_hemisphere = val_hemisphere[0]
-    val_hemisphere = val_hemisphere['src']
 
-    val_full_url = hemis_base_url + val_hemisphere
-
-    hemis_image_urls.append(
-        {"title": val_title, "img_url": val_full_url})
-
-    # Schiaparelli 
-
-    sch_url = 'https://astrogeology.usgs.gov/search/map/Mars/Viking/schiaparelli_enhanced'
-
-    response = requests.get(sch_url)
-    soup = bs(response.text, 'lxml')
-
-    sch_title = soup.find('title').text
-    sch_title = sch_title.split('|')
-    sch_title = sch_title[0]
-
-    sch_hemisphere = soup.find_all('div', class_='wide-image-wrapper')
-    sch_hemisphere = sch_hemisphere[0]
-    sch_hemisphere = sch_hemisphere.find_all('img', class_='wide-image')
-    sch_hemisphere = sch_hemisphere[0]
-    sch_hemisphere = sch_hemisphere['src']
-
-    sch_full_url = hemis_base_url + sch_hemisphere
-
-    hemis_image_urls.append(
-        {"title": sch_title, "img_url": sch_full_url})
-
-    #Syrtis Major
-
-    syrtis_url = 'https://astrogeology.usgs.gov/search/map/Mars/Viking/syrtis_major_enhanced'
-
-    response = requests.get(syrtis_url)
-    soup = bs(response.text, 'lxml')
-
-    syrtis_title = soup.find('title').text
-    syrtis_title = syrtis_title.split('|')
-    syrtis_title = syrtis_title[0]
-
-    syrtis_hemisphere = soup.find_all('div', class_='wide-image-wrapper')
-    syrtis_hemisphere = syrtis_hemisphere[0]
-    syrtis_hemisphere = syrtis_hemisphere.find_all('img', class_='wide-image')
-    syrtis_hemisphere = syrtis_hemisphere[0]
-    syrtis_hemisphere = syrtis_hemisphere['src']
-
-    ##Construct full image URL
-    syrtis_full_url = hemis_base_url + syrtis_hemisphere
-
-    ##Add to dictionary
-    hemis_image_urls.append(
-        {"title": syrtis_title, "img_url": syrtis_full_url})
+    # for result in soup.find_all("div", class_="item"):
+    #     link = result.find("a", class_="itemLink product-item")["href"]
+    #     link = hemis_url_string+link
+    #     browser.visit(link)
+    #     html = browser.html
+    #     soup = bs(html, "html.parser")
+    #     image = soup.find("img", class_="wide-image")["src"]
+    #     image_source = hemis_url_string+image
+    #     title = soup.find("h2", class_="title").text
+    #     links.append({"title": title, "link": image_source})
 
     browser.quit()
 
-    # data.update({"hemis_images": hemis_image_urls})
-
-    data = {"latest_news": header, 
-            "teaser": teaser,
-            "featured_image": featured_image_url,
-            "mars_fact_table": mars_table_html,
-            "hemis_images": hemis_image_urls
-    }
+    data.update({"hemis_images": hemis_image_urls})
     return data
     
 
-# def scrape():
-#     headline()
-#     featured_image()
-#     facts()
-#     images()
-#     print(headline())
-#     return data
+def scrape():
+    headline()
+    featured_image()
+    facts()
+    images()
+    print(headline())
+    return data
+print(scrape())
