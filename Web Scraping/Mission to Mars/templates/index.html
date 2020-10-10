@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Oswald" rel=“stylesheet”>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
@@ -14,38 +15,40 @@
     <title>Mission to Mars</title>
 </head>
 
-<body style="background-color: black">
+<body style="background-image: url('../static/Images/mars.jpg')">
     <div class="container-fluid">
-        <div class="jumbotron text-center">
-            <h1>Is There Life On Mars? - How Habitable is our Next Planet?</h1>
+        <div class="jumbotron text-center" style="background-color:transparent;">
+            <h1 class= "display-3">Is There Life On Mars?</h1>
+            <p>How Habitable is our Next Planet?</p>
             <p><a class="btn btn-primary btn-lg bg-dark" href="/scrape" role="button">Want the Latest Mars Data?</a></p>
         </div>
     </div>
     <div class="container-fluid">
-        <div class="row justify-content-center m-4">
-            <div class="col-lg-12 bg-light rounded">
+        <div class="card-deck">
+            <div class="card" style="border-width: 1em; background-color: rgba(225, 225, 225, 0.5); text-align: center">
                 <h1>Latest Mars News</h1>
                 <h3>{{mars_data.latest_news}}</h3>
                 <p>{{mars_data.teaser}}</p>
             </div>
+            </div>
         </div>
     </div>
     <div class="container-fluid">
-        <div class="row justify-content-center">
-            <div class="col-lg-5 bg-light rounded m-1">
+        <div class="card-deck">
+            <div class="card" style="border-width: 1em; background-color: rgba(225, 225, 225, 0.5); text-align: center">
                 <h1>Featured Mars Image</h1>
                 <img class="img-fluid rounded mx-auto d-block" src="{{mars_data.featured_image_url or ''}}"
                     alt="Failed to load image">
             </div>
-            <div class="col-lg-5 bg-light rounded m-1">
+            <div class="card" style="border-width: 1em; background-color: rgba(225, 225, 225, 0.5); text-align: center">
                 <h1>Mars Info</h1>
                 {{mars_data.mars_fact_table | safe}}
             </div>
         </div>
     </div>
     <div class="container-fluid">
-        <div class="row justify-content-center m-4">
-            <div class="col-lg-12 bg-light rounded">
+        <div class="card-deck">
+            <div class="card" style="border-width: 1em; background-color: rgba(146, 123, 123, 0.5); text-align: center">
                 <h1 class="text-center">Mars Hemispheres</h1>
                 <div class="row">
                     <div class="col-md-6">
@@ -74,4 +77,4 @@
             </div>
         </div>
 </body>        
-</html> -->
+</html>
